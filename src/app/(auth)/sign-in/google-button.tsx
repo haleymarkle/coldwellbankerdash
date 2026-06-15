@@ -34,17 +34,11 @@ function GoogleLogo() {
   );
 }
 
-interface GoogleSignInButtonProps {
-  /** When true, shows the button but disabled with a tooltip (dev mode). */
-  devMode?: boolean;
-}
-
-export function GoogleSignInButton({ devMode = false }: GoogleSignInButtonProps) {
+export function GoogleSignInButton() {
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   async function handleClick() {
-    if (devMode) return;
     setPending(true);
     setError(null);
     const result = await signInWithGoogle();
@@ -52,6 +46,7 @@ export function GoogleSignInButton({ devMode = false }: GoogleSignInButtonProps)
       setError(result.error);
       setPending(false);
     } else {
+      // Hand off to Neon Auth's Google OAuth (shared credentials).
       window.location.href = result.url;
     }
   }
@@ -63,8 +58,7 @@ export function GoogleSignInButton({ devMode = false }: GoogleSignInButtonProps)
         variant="outline"
         className="w-full gap-2"
         onClick={handleClick}
-        disabled={pending || devMode}
-        title={devMode ? "Google sign-in requires NEON_AUTH_COOKIE_SECRET + GOOGLE_CLIENT_ID to be set" : undefined}
+        disabled={pending}
         aria-label="Continue with Google"
       >
         <GoogleLogo />

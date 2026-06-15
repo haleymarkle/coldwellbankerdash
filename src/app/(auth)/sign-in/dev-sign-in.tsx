@@ -27,8 +27,7 @@ export function DevSignIn() {
 
   return (
     <div className="space-y-5">
-      {/* Google button shown but disabled in dev — activates once env vars are set */}
-      <GoogleSignInButton devMode />
+      <GoogleSignInButton />
 
       <div className="flex items-center gap-3">
         <div className="h-px flex-1 bg-border" />
