@@ -8,9 +8,9 @@ import { hasAtLeast } from "@/lib/rbac";
 import { getData } from "@/lib/data";
 import { getDevSession } from "./dev-stub";
 
-/** True when Neon Auth (Better Auth) is configured (production path). */
+/** True when Neon Auth (Better Auth) is fully configured (production path). */
 export function isAuthConfigured(): boolean {
-  return Boolean(process.env.NEON_AUTH_BASE_URL);
+  return Boolean(process.env.NEON_AUTH_BASE_URL && process.env.NEON_AUTH_COOKIE_SECRET);
 }
 
 interface AuthSession {

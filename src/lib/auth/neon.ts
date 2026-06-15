@@ -14,11 +14,16 @@ let _auth: ReturnType<typeof createNeonAuth> | null = null;
 /** Lazily construct (and cache) the Neon Auth instance. */
 export function getAuth() {
   if (!_auth) {
+    const baseUrl = process.env.NEON_AUTH_BASE_URL;
+    const secret = process.env.NEON_AUTH_COOKIE_SECRET;
+    if (!baseUrl || !secret) {
+      throw new Error(
+        "NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET must both be set to use Neon Auth."
+      );
+    }
     _auth = createNeonAuth({
-      baseUrl: process.env.NEON_AUTH_BASE_URL ?? "",
-      cookies: {
-        secret: process.env.NEON_AUTH_COOKIE_SECRET ?? "",
-      },
+      baseUrl,
+      cookies: { secret },
     });
   }
   return _auth;
