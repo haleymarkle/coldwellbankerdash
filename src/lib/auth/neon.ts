@@ -21,19 +21,11 @@ export function getAuth() {
         "NEON_AUTH_BASE_URL and NEON_AUTH_COOKIE_SECRET must both be set to use Neon Auth."
       );
     }
+    // Google OAuth is handled by Neon's shared credentials at the hosted auth
+    // layer — no GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET needed in the app.
     _auth = createNeonAuth({
       baseUrl,
       cookies: { secret },
-      socialProviders: {
-        ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-          ? {
-              google: {
-                clientId: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-              },
-            }
-          : {}),
-      },
     });
   }
   return _auth;
