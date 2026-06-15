@@ -24,9 +24,7 @@ export default function SignInPage() {
             Sign in
           </h1>
           <p className="text-sm text-muted-foreground">
-            {devMode
-              ? "Developer sign-in: choose a role to preview the dashboard."
-              : "Welcome back. Enter your credentials to continue."}
+            Welcome back. Enter your credentials to continue.
           </p>
         </div>
       </div>
