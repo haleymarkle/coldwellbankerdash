@@ -24,7 +24,8 @@ export function AdminNav() {
       className="flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card p-1 shadow-sm"
     >
       {SECTIONS.map((section) => {
-        const isActive = section.exact
+        const exact = "exact" in section && section.exact;
+        const isActive = exact
           ? pathname === section.href
           : pathname === section.href ||
             pathname.startsWith(`${section.href}/`);

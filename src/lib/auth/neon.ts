@@ -1,6 +1,7 @@
-// PRODUCTION auth — Neon Auth (Better Auth). Only imported when NEON_AUTH_BASE_URL
-// is configured. Provides the shared `auth` instance used by the API route handler
-// and the proxy, plus a session reader normalized to { userId }.
+// PRODUCTION auth — Neon Auth (Better Auth). The auth instance is created LAZILY
+// (only when first used) so importing this module never throws at build time when
+// the env vars are absent (dev). `createNeonAuth` validates cookies.secret eagerly,
+// hence the getter.
 //
 // Wire at deploy: enable Neon Auth (Better Auth) on your project's default branch,
 // copy the Auth URL, and set NEON_AUTH_BASE_URL + NEON_AUTH_COOKIE_SECRET
@@ -8,15 +9,23 @@
 
 import { createNeonAuth } from "@neondatabase/neon-js/auth/next/server";
 
-export const auth = createNeonAuth({
-  baseUrl: process.env.NEON_AUTH_BASE_URL ?? "",
-  cookies: {
-    secret: process.env.NEON_AUTH_COOKIE_SECRET ?? "",
-  },
-});
+let _auth: ReturnType<typeof createNeonAuth> | null = null;
+
+/** Lazily construct (and cache) the Neon Auth instance. */
+export function getAuth() {
+  if (!_auth) {
+    _auth = createNeonAuth({
+      baseUrl: process.env.NEON_AUTH_BASE_URL ?? "",
+      cookies: {
+        secret: process.env.NEON_AUTH_COOKIE_SECRET ?? "",
+      },
+    });
+  }
+  return _auth;
+}
 
 export async function getNeonSession(): Promise<{ userId: string } | null> {
-  const { data: session } = await auth.getSession();
+  const { data: session } = await getAuth().getSession();
   if (!session?.user) return null;
   return { userId: session.user.id };
 }

@@ -45,8 +45,8 @@ export async function signIn(
     return { error: "Enter your email and password." };
   }
 
-  const { auth } = await import("@/lib/auth/neon");
-  const { error } = await auth.signIn.email({ email, password });
+  const { getAuth } = await import("@/lib/auth/neon");
+  const { error } = await getAuth().signIn.email({ email, password });
   if (error) {
     return { error: error.message ?? "Unable to sign in. Check your details." };
   }

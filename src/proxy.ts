@@ -10,8 +10,8 @@ import { DEV_SESSION_COOKIE } from "@/lib/auth/dev-stub";
 
 export default async function proxy(request: NextRequest) {
   if (process.env.NEON_AUTH_BASE_URL) {
-    const { auth } = await import("@/lib/auth/neon");
-    return auth.middleware({ loginUrl: "/sign-in" })(request);
+    const { getAuth } = await import("@/lib/auth/neon");
+    return getAuth().middleware({ loginUrl: "/sign-in" })(request);
   }
 
   // DEV gate

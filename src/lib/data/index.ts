@@ -336,18 +336,18 @@ const devApi: DataApi = {
   },
 
   async getAssignedTrainings(profileId) {
-    return store.assignments
-      .filter((a) => a.profileId === profileId)
-      .map((a) => {
-        const training = store.trainings.find((t) => t.id === a.trainingId);
-        if (!training) return null;
-        return {
-          ...training,
-          requiredForRoles: [...training.requiredForRoles],
-          assignment: { ...a },
-        } satisfies TrainingWithProgress;
-      })
-      .filter((x): x is TrainingWithProgress => x !== null);
+    const result: TrainingWithProgress[] = [];
+    for (const a of store.assignments) {
+      if (a.profileId !== profileId) continue;
+      const training = store.trainings.find((t) => t.id === a.trainingId);
+      if (!training) continue;
+      result.push({
+        ...training,
+        requiredForRoles: [...training.requiredForRoles],
+        assignment: { ...a },
+      });
+    }
+    return result;
   },
   async assignTraining(profileId, trainingId) {
     const existing = store.assignments.find(

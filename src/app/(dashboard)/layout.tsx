@@ -5,6 +5,10 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DashboardTopbar } from "@/components/dashboard-topbar";
 
+// Per-user authenticated dashboard — always render at request time (reads the
+// session from cookies; never prerender a shared/stale shell).
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({
   children,
 }: {
