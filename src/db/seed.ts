@@ -192,11 +192,11 @@ async function seedTrainings(): Promise<void> {
 const devProfileSeed = [
   {
     userId: "dev-master_admin",
-    email: "admin@cbabr.com",
-    displayName: "Avery Stone",
+    email: "haleymarkle@gmail.com",
+    displayName: "Haley Markle",
     role: "master_admin" as Role,
     status: "active" as const,
-    title: "Platform Administrator",
+    title: "Broker / Owner",
   },
   {
     userId: "dev-high_level_user",
@@ -249,12 +249,12 @@ async function seedBootstrapAdmin(hqOfficeId: string): Promise<void> {
     .insert(profiles)
     .values({
       userId: adminUserId,
-      email: "admin@cbabr.com",
-      displayName: "Platform Administrator",
+      email: "haleymarkle@gmail.com",
+      displayName: "Haley Markle",
       role: "master_admin",
       status: "active",
       officeId: hqOfficeId || null,
-      title: "Platform Administrator",
+      title: "Broker / Owner",
     })
     .onConflictDoNothing({ target: profiles.userId });
   console.log("[seed]   bootstrap admin ensured.");

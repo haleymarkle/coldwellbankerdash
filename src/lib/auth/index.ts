@@ -30,7 +30,30 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
   if (!session) return null;
 
   const data = await getData();
-  const profile = await data.getProfileByUserId(session.userId);
+  let profile = await data.getProfileByUserId(session.userId);
+
+  // First-time Google sign-in: no profile yet. Auto-create a pending one.
+  // haleymarkle@gmail.com is always bootstrapped as master_admin.
+  if (!profile) {
+    const neonUser = isAuthConfigured()
+      ? await (async () => {
+          const { getNeonUser } = await import("./neon");
+          return getNeonUser(session.userId);
+        })()
+      : null;
+    if (neonUser?.email) {
+      const isMasterAdmin =
+        neonUser.email.toLowerCase() === "haleymarkle@gmail.com";
+      profile = await data.createProfile({
+        userId: session.userId,
+        email: neonUser.email,
+        displayName: neonUser.name ?? neonUser.email,
+        role: isMasterAdmin ? "master_admin" : "agent",
+        status: isMasterAdmin ? "active" : "invited",
+      });
+    }
+  }
+
   if (!profile || profile.status === "disabled") return null;
 
   return {
@@ -53,10 +76,11 @@ async function officeNameFor(officeId: string): Promise<string | null> {
   return office?.name ?? null;
 }
 
-/** Require an authenticated user; redirect to sign-in otherwise. */
+/** Require an authenticated user; redirect to sign-in (or /pending if awaiting approval). */
 export async function requireUser(): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user) redirect("/sign-in");
+  if (user.status === "invited") redirect("/pending");
   return user;
 }
 

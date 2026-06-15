@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import type { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowUpDown, Check, MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,10 +28,11 @@ import type {
 
 import { UserDialog } from "./user-dialog";
 import { DeleteUserDialog } from "./delete-user-dialog";
+import { approveUserAction, type ActionState } from "./actions";
 
 const STATUS_LABELS: Record<UserStatus, string> = {
   active: "Active",
-  invited: "Invited",
+  invited: "Pending",
   disabled: "Disabled",
 };
 
@@ -41,12 +43,43 @@ function StatusBadge({ status }: { status: UserStatus }) {
       className={cn(
         status === "active" &&
           "border-emerald-600/30 bg-emerald-500/10 text-emerald-700 dark:border-emerald-400/30 dark:text-emerald-400",
-        status === "invited" && "bg-accent text-accent-foreground",
+        status === "invited" && "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:border-amber-400/30 dark:text-amber-400",
         status === "disabled" && "text-muted-foreground"
       )}
     >
       {STATUS_LABELS[status]}
     </Badge>
+  );
+}
+
+/** Inline approve button shown when a user is pending (invited). */
+function ApproveButton({ user }: { user: ProfileWithOffice }) {
+  const initialState: ActionState = { ok: false };
+  const [state, formAction, pending] = React.useActionState(approveUserAction, initialState);
+  const handledRef = React.useRef(state);
+
+  React.useEffect(() => {
+    if (state === handledRef.current) return;
+    handledRef.current = state;
+    if (state.ok) toast.success(`${user.displayName} approved.`);
+    else if (state.error) toast.error(state.error);
+  }, [state, user.displayName]);
+
+  return (
+    <form action={formAction}>
+      <input type="hidden" name="id" value={user.id} />
+      <input type="hidden" name="role" value={user.role} />
+      <Button
+        type="submit"
+        size="sm"
+        variant="outline"
+        disabled={pending}
+        className="h-7 gap-1.5 border-emerald-600/40 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 dark:border-emerald-400/30 dark:text-emerald-400 dark:hover:bg-emerald-950"
+      >
+        <Check className="size-3.5" aria-hidden="true" />
+        Approve
+      </Button>
+    </form>
   );
 }
 
@@ -180,11 +213,16 @@ export function UsersTable({ users, offices, allowedRoles }: UsersTableProps) {
         id: "actions",
         header: () => <span className="sr-only">Actions</span>,
         cell: ({ row }) => (
-          <UserRowActions
-            user={row.original}
-            offices={offices}
-            allowedRoles={allowedRoles}
-          />
+          <div className="flex items-center justify-end gap-2">
+            {row.original.status === "invited" ? (
+              <ApproveButton user={row.original} />
+            ) : null}
+            <UserRowActions
+              user={row.original}
+              offices={offices}
+              allowedRoles={allowedRoles}
+            />
+          </div>
         ),
       },
     ],

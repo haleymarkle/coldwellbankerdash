@@ -55,3 +55,22 @@ export async function signIn(
 
   redirect("/");
 }
+
+/**
+ * Initiate Google OAuth sign-in (prod only).
+ * Returns the redirect URL to send the browser to.
+ */
+export async function signInWithGoogle(): Promise<{ url: string } | { error: string }> {
+  if (!isAuthConfigured()) {
+    return { error: "Google sign-in is only available in production." };
+  }
+  const { getAuth } = await import("@/lib/auth/neon");
+  const { data, error } = await getAuth().signIn.social({
+    provider: "google",
+    callbackURL: "/",
+  });
+  if (error || !data?.url) {
+    return { error: error?.message ?? "Could not initiate Google sign-in." };
+  }
+  return { url: data.url };
+}

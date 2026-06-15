@@ -24,6 +24,16 @@ export function getAuth() {
     _auth = createNeonAuth({
       baseUrl,
       cookies: { secret },
+      socialProviders: {
+        ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+          ? {
+              google: {
+                clientId: process.env.GOOGLE_CLIENT_ID,
+                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+              },
+            }
+          : {}),
+      },
     });
   }
   return _auth;
@@ -33,4 +43,15 @@ export async function getNeonSession(): Promise<{ userId: string } | null> {
   const { data: session } = await getAuth().getSession();
   if (!session?.user) return null;
   return { userId: session.user.id };
+}
+
+export async function getNeonUser(
+  userId: string
+): Promise<{ email: string; name: string | null } | null> {
+  const { data: session } = await getAuth().getSession();
+  if (!session?.user || session.user.id !== userId) return null;
+  return {
+    email: session.user.email,
+    name: session.user.name ?? null,
+  };
 }
