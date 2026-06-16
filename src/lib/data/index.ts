@@ -115,6 +115,7 @@ export interface DataApi {
   listProfiles(): Promise<ProfileWithOffice[]>;
   listProfilesByOffice(officeId: string): Promise<ProfileWithOffice[]>;
   getProfileByUserId(userId: string): Promise<Profile | null>;
+  getProfileByEmail(email: string): Promise<Profile | null>;
   getProfileById(id: string): Promise<Profile | null>;
   createProfile(input: ProfileInput): Promise<Profile>;
   updateProfile(id: string, input: Partial<ProfileInput>): Promise<Profile | null>;
@@ -225,6 +226,9 @@ const devApi: DataApi = {
   },
   async getProfileByUserId(userId) {
     return store.profiles.find((p) => p.userId === userId) ?? null;
+  },
+  async getProfileByEmail(email) {
+    return store.profiles.find((p) => p.email.toLowerCase() === email.toLowerCase()) ?? null;
   },
   async getProfileById(id) {
     return store.profiles.find((p) => p.id === id) ?? null;

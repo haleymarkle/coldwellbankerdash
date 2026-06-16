@@ -187,6 +187,54 @@ async function seedTrainings(): Promise<void> {
   console.log(`[seed]   ${trainingSeed.length} trainings ensured.`);
 }
 
+// Dev stub profiles — these userId values match DEV_USER_IDS in seed-data.ts
+// so the dev sign-in (no NEON_AUTH_COOKIE_SECRET) works against the real DB.
+const devProfileSeed = [
+  {
+    userId: "dev-master_admin",
+    email: "haleymarkle@gmail.com",
+    displayName: "Haley Markle",
+    role: "master_admin" as Role,
+    status: "active" as const,
+    title: "Broker / Owner",
+  },
+  {
+    userId: "dev-high_level_user",
+    email: "haley@cbabr.com",
+    displayName: "Haley Markle",
+    role: "high_level_user" as Role,
+    status: "active" as const,
+    title: "Broker / Owner",
+  },
+  {
+    userId: "dev-office_manager",
+    email: "dana@cbabr.com",
+    displayName: "Dana Kruselenz",
+    role: "office_manager" as Role,
+    status: "active" as const,
+    title: "Office Manager",
+  },
+  {
+    userId: "dev-agent",
+    email: "katie@cbabr.com",
+    displayName: "Katie Irwin",
+    role: "agent" as Role,
+    status: "active" as const,
+    title: "Sales Associate",
+  },
+];
+
+async function seedDevProfiles(hqOfficeId: string): Promise<void> {
+  console.log("[seed] Dev stub profiles…");
+  for (const p of devProfileSeed) {
+    await db
+      .insert(profiles)
+      .values({ ...p, officeId: hqOfficeId || null })
+      .onConflictDoNothing({ target: profiles.userId });
+  }
+  console.log(`[seed]   ${devProfileSeed.length} dev profiles ensured.`);
+}
+
 async function seedBootstrapAdmin(hqOfficeId: string): Promise<void> {
   const adminUserId = process.env.BOOTSTRAP_ADMIN_USER_ID;
   if (!adminUserId) {
@@ -201,12 +249,12 @@ async function seedBootstrapAdmin(hqOfficeId: string): Promise<void> {
     .insert(profiles)
     .values({
       userId: adminUserId,
-      email: "admin@cbabr.com",
-      displayName: "Platform Administrator",
+      email: "haleymarkle@gmail.com",
+      displayName: "Haley Markle",
       role: "master_admin",
       status: "active",
       officeId: hqOfficeId || null,
-      title: "Platform Administrator",
+      title: "Broker / Owner",
     })
     .onConflictDoNothing({ target: profiles.userId });
   console.log("[seed]   bootstrap admin ensured.");
@@ -217,6 +265,7 @@ async function main(): Promise<void> {
   const hqOfficeId = await seedOffices();
   await seedTools();
   await seedTrainings();
+  await seedDevProfiles(hqOfficeId);
   await seedBootstrapAdmin(hqOfficeId);
   console.log("[seed] Done.");
   process.exit(0);

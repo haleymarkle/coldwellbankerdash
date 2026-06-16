@@ -9,7 +9,11 @@ export default async function AuthLayout({
 }: {
   children: ReactNode;
 }) {
-  if (await getCurrentUser()) redirect("/");
+  // Only redirect fully active users away from sign-in.
+  // Invited (pending) users are sent to /pending by requireUser; they can
+  // still land on /sign-in directly, so we leave them alone here.
+  const user = await getCurrentUser();
+  if (user && user.status === "active") redirect("/");
 
   return (
     <div className="grid min-h-screen lg:grid-cols-2">

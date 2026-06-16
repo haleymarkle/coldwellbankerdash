@@ -153,3 +153,26 @@ export async function deleteUserAction(
   revalidatePath("/admin/users");
   return { ok: true };
 }
+
+/**
+ * Approve a pending (invited) user: sets their status to "active" and optionally
+ * assigns a role. Requires at least high_level_user rank.
+ */
+export async function approveUserAction(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const { allowed } = await requireRole("high_level_user");
+  if (!allowed) return { ok: false, error: "You do not have permission to do this." };
+
+  const id = String(formData.get("id") ?? "").trim();
+  const role = String(formData.get("role") ?? "agent").trim() as Role;
+  if (!id) return { ok: false, error: "Missing user id." };
+
+  const data = await getData();
+  const updated = await data.updateProfile(id, { status: "active", role });
+  if (!updated) return { ok: false, error: "User not found." };
+
+  revalidatePath("/admin/users");
+  return { ok: true };
+}

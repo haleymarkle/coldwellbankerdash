@@ -1,14 +1,14 @@
-// DEV auth stub. Active when NEON_AUTH_BASE_URL is unset, so the app runs locally
-// with zero credentials. "Signing in" sets a session cookie; the Dev Role Switcher
-// sets `dev_role` so you can view the app as any of the 4 roles. NEVER used in prod.
+// DEV auth stub. Active when NEON_AUTH_COOKIE_SECRET is unset, so the app runs
+// locally with zero credentials. Sign-in sets a session cookie with the real
+// userId from the DB profile matched by email. NEVER used in prod.
 
 import { cookies } from "next/headers";
 import type { Role } from "@/lib/types";
 import { ROLES } from "@/lib/rbac";
-import { DEV_USER_IDS } from "@/lib/data/seed-data";
 
 export const DEV_SESSION_COOKIE = "cb_dev_session";
 export const DEV_ROLE_COOKIE = "cb_dev_role";
+export const DEV_USER_ID_COOKIE = "cb_dev_user_id";
 
 function isRole(value: string | undefined): value is Role {
   return value != null && (ROLES as string[]).includes(value);
@@ -23,6 +23,7 @@ export async function getDevRole(): Promise<Role> {
 export async function getDevSession(): Promise<{ userId: string } | null> {
   const jar = await cookies();
   if (!jar.get(DEV_SESSION_COOKIE)) return null;
-  const role = await getDevRole();
-  return { userId: DEV_USER_IDS[role] };
+  const userId = jar.get(DEV_USER_ID_COOKIE)?.value;
+  if (!userId) return null;
+  return { userId };
 }

@@ -282,6 +282,15 @@ export const dbApi: DataApi = {
     return rows[0] ? mapProfile(rows[0]) : null;
   },
 
+  async getProfileByEmail(email) {
+    const rows = await db
+      .select()
+      .from(profiles)
+      .where(eq(profiles.email, email.toLowerCase()))
+      .limit(1);
+    return rows[0] ? mapProfile(rows[0]) : null;
+  },
+
   async getProfileById(id) {
     const rows = await db
       .select()
