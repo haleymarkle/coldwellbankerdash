@@ -21,7 +21,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { CommissionCalculator } from "./_tools/commission-calculator";
+import { CommissionLedger } from "./_tools/commission-ledger";
+import { getCommissionData } from "@/lib/commission/data";
 
 interface ToolPageProps {
   params: Promise<{ slug: string }>;
@@ -76,6 +77,32 @@ export default async function ToolPage({ params }: ToolPageProps) {
     );
   }
 
+  if (isBuiltInternalTool(tool.slug) && tool.slug === "commission-calculator") {
+    const commissionData = await getCommissionData();
+    const [initialSettings, initialAgents, initialEntries] = await Promise.all([
+      commissionData.getSettings(),
+      commissionData.listAgents(),
+      commissionData.listEntries(),
+    ]);
+    return (
+      <div className="space-y-8">
+        {backLink}
+        <PageHeader
+          eyebrow="Resources"
+          title={tool.name}
+          description={tool.description}
+        >
+          <Badge variant="secondary">{tool.category}</Badge>
+        </PageHeader>
+        <CommissionLedger
+          initialSettings={initialSettings}
+          initialAgents={initialAgents}
+          initialEntries={initialEntries}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {backLink}
@@ -125,12 +152,6 @@ export default async function ToolPage({ params }: ToolPageProps) {
           </CardFooter>
         </Card>
       );
-    }
-
-    if (isBuiltInternalTool(tool!.slug)) {
-      if (tool!.slug === "commission-calculator") {
-        return <CommissionCalculator />;
-      }
     }
 
     return (

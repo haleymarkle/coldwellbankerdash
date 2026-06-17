@@ -23,9 +23,9 @@ export const SEED_TOOLS: Tool[] = [
   {
     id: "tool-commission-calculator",
     slug: "commission-calculator",
-    name: "Commission Calculator",
+    name: "Commission Ledger",
     description:
-      "Estimate gross commission, splits, and agent net for a sale price and rate.",
+      "Log deals and track year-to-date payouts with referral, corporate, and progressive tiered agent splits.",
     icon: "Calculator",
     type: "internal_route",
     url: "/tools/commission-calculator",
