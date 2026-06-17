@@ -40,11 +40,11 @@ import {
   updateAgentAction,
 } from "./commission-actions";
 
-const INK = "#16203A";
-const C = { referral: "#d97706", corporate: "#6366f1", agent: "#0f766e", company: "#0284c7" };
+const INK = "#1A2B4A";
+const C = { referral: "#C8A24B", corporate: "#14213D", agent: "#213B79", company: "#5A6573" };
 
 const inputCls =
-  "mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/40 focus:border-teal-500";
+  "mt-1 w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/40 focus:border-ring";
 
 interface LedgerProps {
   initialSettings: CommissionSettings;
@@ -171,7 +171,7 @@ export function CommissionLedger({
   };
 
   return (
-    <div className="text-slate-800">
+    <div className="text-foreground">
       {error && (
         <div className="mb-4 flex items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
           <AlertCircle size={15} /> {error}
@@ -187,7 +187,7 @@ export function CommissionLedger({
               Commission Ledger
             </h2>
           </div>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Year-to-date payouts with progressive, tiered agent splits.
           </p>
         </div>
@@ -195,7 +195,7 @@ export function CommissionLedger({
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="rounded-md border border-slate-300 px-3 py-2 text-sm font-mono bg-white"
+            className="rounded-md border border-input px-3 py-2 text-sm font-mono bg-white"
             aria-label="Filter by year"
           >
             {years.map((y) => (
@@ -207,7 +207,7 @@ export function CommissionLedger({
           <button
             onClick={() => exportCSV(results, settings, agents)}
             disabled={!results.length}
-            className="flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium hover:bg-slate-100 disabled:opacity-40"
+            className="flex items-center gap-1.5 rounded-md border border-input bg-white px-3 py-2 text-sm font-medium hover:bg-slate-100 disabled:opacity-40"
           >
             <Download size={15} /> CSV
           </button>
@@ -224,7 +224,7 @@ export function CommissionLedger({
       </div>
 
       {/* tabs */}
-      <nav className="flex gap-1 border-b border-slate-200 mb-5">
+      <nav className="flex gap-1 border-b border-border mb-5">
         {tabs.map((t) => {
           const Icon = t.icon;
           const active = tab === t.id;
@@ -234,8 +234,8 @@ export function CommissionLedger({
               onClick={() => setTab(t.id)}
               className={`flex items-center gap-1.5 px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
                 active
-                  ? "border-teal-600 text-teal-700"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               }`}
             >
               <Icon size={15} /> {t.label}
@@ -271,7 +271,7 @@ export function CommissionLedger({
         <SettingsPanel settings={settings} onChange={saveSettings} />
       )}
 
-      <footer className="mt-10 pt-4 border-t border-slate-200 text-[11px] text-slate-400 leading-relaxed">
+      <footer className="mt-10 pt-4 border-t border-slate-200 text-[11px] text-muted-foreground/70 leading-relaxed">
         Calculation order per deal: referral off the top → {settings.corporatePct}% corporate on the
         remainder → tiered agent/company split. Figures are estimates for internal tracking; referral
         fees and split arrangements must comply with your state license law and RESPA. Data is saved to
@@ -297,12 +297,12 @@ function Stat({
   accent?: string;
 }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg px-4 py-3">
-      <div className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">{label}</div>
+    <div className="bg-card border border-border rounded-lg px-4 py-3">
+      <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
       <div className="font-mono text-xl tabular-nums mt-1" style={{ color: accent || INK }}>
         {value}
       </div>
-      {sub && <div className="text-xs text-slate-400 mt-0.5">{sub}</div>}
+      {sub && <div className="text-xs text-muted-foreground/70 mt-0.5">{sub}</div>}
     </div>
   );
 }
@@ -318,9 +318,9 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="text-xs font-semibold text-slate-600">{label}</span>
+      <span className="text-xs font-semibold text-foreground/80">{label}</span>
       {children}
-      {hint && <span className="block text-[11px] text-slate-400 mt-0.5">{hint}</span>}
+      {hint && <span className="block text-[11px] text-muted-foreground/70 mt-0.5">{hint}</span>}
     </label>
   );
 }
@@ -343,7 +343,7 @@ function Waterfall({ r }: { r: ComputedEntry }) {
     ) : null;
   return (
     <div className="space-y-3">
-      <div className="flex h-7 w-full rounded overflow-hidden border border-slate-200">
+      <div className="flex h-7 w-full rounded overflow-hidden border border-border">
         {seg(r.referral, C.referral, "Referral")}
         {seg(r.corporate, C.corporate, "Corporate")}
         {seg(r.agentAmt, C.agent, "Agent")}
@@ -374,7 +374,7 @@ function Bd({ c, k, v }: { c: string; k: string; v: number }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: c }} />
-      <span className="text-slate-500">{k}</span>
+      <span className="text-muted-foreground">{k}</span>
       <span className="font-mono tabular-nums ml-auto" style={{ color: INK }}>
         {usd(v)}
       </span>
@@ -408,8 +408,8 @@ function Dashboard({
     );
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
-      <div className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-slate-50 border-b border-slate-200 text-[11px] uppercase tracking-wider font-semibold text-slate-500">
+    <div className="bg-card border border-border rounded-lg overflow-hidden">
+      <div className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-slate-50 border-b border-border text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
         <div className="col-span-3">Date / Agent</div>
         <div className="col-span-3">Property</div>
         <div className="col-span-2 text-right">GCI</div>
@@ -419,7 +419,7 @@ function Dashboard({
       {rows.map((r) => {
         const isOpen = open === r.id;
         return (
-          <div key={r.id} className="border-b border-slate-100 last:border-0">
+          <div key={r.id} className="border-b border-border/60 last:border-0">
             <button
               onClick={() => setOpen(isOpen ? null : r.id)}
               className="w-full grid grid-cols-12 gap-2 px-4 py-3 text-sm hover:bg-slate-50 text-left items-center"
@@ -427,11 +427,11 @@ function Dashboard({
               <div className="col-span-3 min-w-0">
                 <div className="flex items-center gap-1 font-medium" style={{ color: INK }}>
                   {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                  <span className="font-mono text-xs text-slate-500">{r.date}</span>
+                  <span className="font-mono text-xs text-muted-foreground">{r.date}</span>
                 </div>
-                <div className="text-xs text-slate-600 truncate pl-5">{nameOf(r.agentId)}</div>
+                <div className="text-xs text-foreground/80 truncate pl-5">{nameOf(r.agentId)}</div>
               </div>
-              <div className="col-span-3 text-slate-600 truncate">{r.property || "—"}</div>
+              <div className="col-span-3 text-foreground/80 truncate">{r.property || "—"}</div>
               <div className="col-span-2 text-right font-mono tabular-nums">{usd(r.gci)}</div>
               <div className="col-span-2 text-right font-mono tabular-nums" style={{ color: C.agent }}>
                 {usd(r.agentAmt)}
@@ -443,7 +443,7 @@ function Dashboard({
             {isOpen && (
               <div className="px-4 pb-4 pt-1 bg-slate-50/60">
                 <Waterfall r={r} />
-                <div className="flex items-center justify-between mt-3 text-xs text-slate-500">
+                <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
                   <span>
                     Company YTD before this deal:{" "}
                     <span className="font-mono">{usd(r.basisBefore)}</span> → after:{" "}
@@ -500,7 +500,7 @@ function NewCommission({
         action={
           <button
             onClick={onNeedAgent}
-            className="rounded-md bg-teal-600 text-white px-4 py-2 text-sm font-medium hover:bg-teal-700"
+            className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90"
           >
             Go to Agents
           </button>
@@ -511,7 +511,7 @@ function NewCommission({
   const valid = num(form.gci) > 0 && form.agentId && form.date;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-5 max-w-2xl">
+    <div className="bg-card border border-border rounded-lg p-5 max-w-2xl">
       <div className="grid sm:grid-cols-2 gap-4">
         <Field label="Date">
           <input
@@ -595,7 +595,7 @@ function NewCommission({
               referralValue: num(form.referralValue),
             })
           }
-          className="rounded-md bg-teal-600 text-white px-5 py-2 text-sm font-semibold hover:bg-teal-700 disabled:opacity-40"
+          className="rounded-md bg-primary text-primary-foreground px-5 py-2 text-sm font-semibold hover:bg-primary/90 disabled:opacity-40"
         >
           {pending ? "Saving…" : "Record commission"}
         </button>
@@ -641,7 +641,7 @@ function AgentsPanel({
 
   return (
     <div className="space-y-4">
-      <div className="bg-white border border-slate-200 rounded-lg p-4 flex gap-2">
+      <div className="bg-card border border-border rounded-lg p-4 flex gap-2">
         <input
           className={inputCls + " mt-0"}
           placeholder="New agent name"
@@ -654,7 +654,7 @@ function AgentsPanel({
             onAdd(name.trim());
             setName("");
           }}
-          className="rounded-md bg-teal-600 text-white px-4 py-2 text-sm font-medium hover:bg-teal-700 disabled:opacity-40 whitespace-nowrap"
+          className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-40 whitespace-nowrap"
         >
           Add agent
         </button>
@@ -671,7 +671,7 @@ function AgentsPanel({
         const pct =
           nextThresh != null ? Math.min(100, ((m.basis - prevThresh) / span) * 100) : 100;
         return (
-          <div key={a.id} className="bg-white border border-slate-200 rounded-lg p-4">
+          <div key={a.id} className="bg-card border border-border rounded-lg p-4">
             <div className="flex items-center justify-between mb-3">
               {editing === a.id ? (
                 <div className="flex items-center gap-2">
@@ -685,12 +685,12 @@ function AgentsPanel({
                       if (editName.trim()) onRename(a.id, editName.trim());
                       setEditing(null);
                     }}
-                    className="text-teal-600"
+                    className="text-primary"
                     aria-label="Save name"
                   >
                     <Check size={16} />
                   </button>
-                  <button onClick={() => setEditing(null)} className="text-slate-400" aria-label="Cancel">
+                  <button onClick={() => setEditing(null)} className="text-muted-foreground/70" aria-label="Cancel">
                     <X size={16} />
                   </button>
                 </div>
@@ -704,7 +704,7 @@ function AgentsPanel({
                       setEditing(a.id);
                       setEditName(a.name);
                     }}
-                    className="text-slate-400 hover:text-slate-600"
+                    className="text-muted-foreground/70 hover:text-foreground/80"
                     aria-label="Edit agent"
                   >
                     <Pencil size={13} />
@@ -730,23 +730,23 @@ function AgentsPanel({
 
             <div className="grid grid-cols-3 gap-3 mb-3 text-sm">
               <div>
-                <div className="text-[11px] text-slate-500 uppercase tracking-wide">GCI</div>
+                <div className="text-[11px] text-muted-foreground uppercase tracking-wide">GCI</div>
                 <div className="font-mono tabular-nums">{usd(m.gci)}</div>
               </div>
               <div>
-                <div className="text-[11px] text-slate-500 uppercase tracking-wide">Paid to agent</div>
+                <div className="text-[11px] text-muted-foreground uppercase tracking-wide">Paid to agent</div>
                 <div className="font-mono tabular-nums" style={{ color: C.agent }}>
                   {usd(m.paid)}
                 </div>
               </div>
               <div>
-                <div className="text-[11px] text-slate-500 uppercase tracking-wide">Deals</div>
+                <div className="text-[11px] text-muted-foreground uppercase tracking-wide">Deals</div>
                 <div className="font-mono tabular-nums">{m.count}</div>
               </div>
             </div>
 
             <div>
-              <div className="flex justify-between text-[11px] text-slate-500 mb-1">
+              <div className="flex justify-between text-[11px] text-muted-foreground mb-1">
                 <span>
                   Company earnings toward{" "}
                   {nextThresh != null ? "next tier" : "top tier reached"}
@@ -803,7 +803,7 @@ function SettingsPanel({
 
   return (
     <div className="space-y-4 max-w-2xl">
-      <div className="bg-white border border-slate-200 rounded-lg p-5">
+      <div className="bg-card border border-border rounded-lg p-5">
         <h3 className="font-semibold mb-3" style={{ color: INK }}>
           Deductions
         </h3>
@@ -817,7 +817,7 @@ function SettingsPanel({
         </Field>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-lg p-5">
+      <div className="bg-card border border-border rounded-lg p-5">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-semibold" style={{ color: INK }}>
             Progressive split tiers
@@ -829,7 +829,7 @@ function SettingsPanel({
             <Plus size={14} /> Add tier
           </button>
         </div>
-        <p className="text-xs text-slate-500 mb-3">
+        <p className="text-xs text-muted-foreground mb-3">
           Each tier sets the agent split until company earnings reach the ceiling, then the next tier
           applies.
         </p>
@@ -841,10 +841,10 @@ function SettingsPanel({
                 key={i}
                 className="flex flex-wrap items-end gap-3 p-3 bg-slate-50 rounded-md border border-slate-100"
               >
-                <div className="text-xs text-slate-500 font-mono pt-2">{usd(prev || 0)} –</div>
+                <div className="text-xs text-muted-foreground font-mono pt-2">{usd(prev || 0)} –</div>
                 <Field label="Up to (company $)">
                   {t.threshold == null ? (
-                    <div className={inputCls + " w-32 bg-slate-100 text-slate-400 italic"}>
+                    <div className={inputCls + " w-32 bg-slate-100 text-muted-foreground/70 italic"}>
                       and above
                     </div>
                   ) : (
@@ -867,7 +867,7 @@ function SettingsPanel({
                     }}
                   />
                 </Field>
-                <div className="text-sm text-slate-500 pb-2">/ {t.companyPct}% co.</div>
+                <div className="text-sm text-muted-foreground pb-2">/ {t.companyPct}% co.</div>
                 {settings.tiers.length > 1 && (
                   <button
                     onClick={() => removeTier(i)}
@@ -883,7 +883,7 @@ function SettingsPanel({
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-lg p-5 space-y-4">
+      <div className="bg-card border border-border rounded-lg p-5 space-y-4">
         <h3 className="font-semibold" style={{ color: INK }}>
           Tier accrual rules
         </h3>
@@ -938,7 +938,7 @@ function Toggle({
         <div className="text-sm font-medium" style={{ color: INK }}>
           {label}
         </div>
-        <div className="text-xs text-slate-500 mt-0.5">{desc}</div>
+        <div className="text-xs text-muted-foreground mt-0.5">{desc}</div>
       </div>
       <button
         onClick={() => onChange(!on)}
@@ -978,7 +978,7 @@ function Radio({
         <span className="text-sm font-medium" style={{ color: INK }}>
           {label}
         </span>
-        <span className="block text-xs text-slate-500">{desc}</span>
+        <span className="block text-xs text-muted-foreground">{desc}</span>
       </span>
     </label>
   );
@@ -999,8 +999,8 @@ function Empty({
 }) {
   return (
     <div className="bg-white border border-dashed border-slate-300 rounded-lg p-10 text-center">
-      <h3 className="font-semibold text-slate-700">{title}</h3>
-      <p className="text-sm text-slate-500 mt-1 max-w-md mx-auto">{body}</p>
+      <h3 className="font-semibold text-foreground">{title}</h3>
+      <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">{body}</p>
       {action && <div className="mt-4">{action}</div>}
     </div>
   );
