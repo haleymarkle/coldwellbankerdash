@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-heading: var(--font-bodoni), ui-serif, Georgia, serif;
+  --font-heading: var(--font-cormorant), ui-serif, Georgia, serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -43,6 +43,10 @@
   --color-cb-navy: var(--cb-navy);
   --color-cb-blue: var(--cb-blue);
   --color-cb-taupe: var(--cb-taupe);
+  --color-cb-gold: var(--cb-gold);
+  --color-cb-cream: var(--cb-cream);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -53,107 +57,122 @@
 }
 
 /*
-  Coldwell Banker brand palette
-  - CB Blue (Pantone 280):  #012169  -> --primary / --cb-navy
-  - Accent navy:            #213B79  -> --ring / --cb-blue
-  - Warm taupe (secondary): #969085  -> --cb-taupe
-  - Gallery background:     #FDFDFD
-  Sidebar is a confident CB navy in BOTH themes (premium inset look).
+  Coldwell Banker Associated Brokers — brand standard (exact tokens)
+  - Primary navy #14213D : sidebar + primary buttons
+  - Deep navy    #1A2B4A : headings on light backgrounds
+  - Cream        #F7F4EC : main content background
+  - White        #FFFFFF : cards / panels
+  - Gold         #C8A24B : accents + active states only (never body text)
+  - Body text    #25303F : readable dark on light
+  - Muted text   #5A6573 : secondary labels
+  - Success      #1D7A5F / Alert #A32D2D : status only
 */
 :root {
   --radius: 0.625rem;
 
-  --cb-navy: oklch(0.28 0.105 264);
-  --cb-blue: oklch(0.4 0.1 263);
-  --cb-taupe: oklch(0.66 0.018 85);
+  --cb-navy: #14213d;
+  --cb-blue: #213b79;
+  --cb-taupe: #969085;
+  --cb-gold: #c8a24b;
+  --cb-cream: #f7f4ec;
+  --cb-heading: #1a2b4a;
 
-  --background: oklch(0.992 0.001 247);
-  --foreground: oklch(0.22 0.022 264);
+  --background: #f7f4ec;
+  --foreground: #25303f;
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.022 264);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.022 264);
+  --card: #ffffff;
+  --card-foreground: #25303f;
+  --popover: #ffffff;
+  --popover-foreground: #25303f;
 
-  --primary: oklch(0.28 0.105 264);
-  --primary-foreground: oklch(0.985 0.002 247);
+  --primary: #14213d;
+  --primary-foreground: #ffffff;
 
-  --secondary: oklch(0.955 0.006 80);
-  --secondary-foreground: oklch(0.3 0.04 264);
+  --secondary: #efece2;
+  --secondary-foreground: #1a2b4a;
 
-  --muted: oklch(0.965 0.003 247);
-  --muted-foreground: oklch(0.5 0.014 264);
+  --muted: #efece2;
+  --muted-foreground: #5a6573;
 
-  --accent: oklch(0.945 0.024 264);
-  --accent-foreground: oklch(0.28 0.105 264);
+  --accent: #f1e9d4;
+  --accent-foreground: #1a2b4a;
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #a32d2d;
 
-  --border: oklch(0.9 0.005 255);
-  --input: oklch(0.9 0.005 255);
-  --ring: oklch(0.4 0.1 263);
+  --success: #1d7a5f;
+  --success-foreground: #ffffff;
 
-  --chart-1: oklch(0.28 0.105 264);
-  --chart-2: oklch(0.45 0.1 263);
-  --chart-3: oklch(0.6 0.08 250);
-  --chart-4: oklch(0.66 0.018 85);
-  --chart-5: oklch(0.8 0.014 85);
+  --border: #e2dccd;
+  --input: #d8d2c2;
+  --ring: #c8a24b;
 
-  --sidebar: oklch(0.26 0.1 264);
-  --sidebar-foreground: oklch(0.92 0.012 250);
-  --sidebar-primary: oklch(0.99 0.002 247);
-  --sidebar-primary-foreground: oklch(0.28 0.105 264);
-  --sidebar-accent: oklch(0.33 0.09 264);
-  --sidebar-accent-foreground: oklch(0.97 0.005 250);
-  --sidebar-border: oklch(0.42 0.07 264 / 35%);
-  --sidebar-ring: oklch(0.7 0.06 255);
+  --chart-1: #14213d;
+  --chart-2: #213b79;
+  --chart-3: #4a6aa5;
+  --chart-4: #c8a24b;
+  --chart-5: #969085;
+
+  --sidebar: #14213d;
+  --sidebar-foreground: #eef1f6;
+  --sidebar-primary: #c8a24b;
+  --sidebar-primary-foreground: #14213d;
+  --sidebar-accent: #233456;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: rgba(200, 162, 75, 0.28);
+  --sidebar-ring: #c8a24b;
 }
 
 .dark {
-  --cb-navy: oklch(0.55 0.13 264);
-  --cb-blue: oklch(0.62 0.12 264);
-  --cb-taupe: oklch(0.7 0.02 85);
+  --cb-navy: #213b79;
+  --cb-blue: #4a6aa5;
+  --cb-taupe: #b3ada1;
+  --cb-gold: #d4b25f;
+  --cb-cream: #f7f4ec;
+  --cb-heading: #eef1f6;
 
-  --background: oklch(0.17 0.015 264);
-  --foreground: oklch(0.96 0.005 250);
+  --background: #101725;
+  --foreground: #eef1f6;
 
-  --card: oklch(0.215 0.02 264);
-  --card-foreground: oklch(0.96 0.005 250);
-  --popover: oklch(0.215 0.02 264);
-  --popover-foreground: oklch(0.96 0.005 250);
+  --card: #16203a;
+  --card-foreground: #eef1f6;
+  --popover: #16203a;
+  --popover-foreground: #eef1f6;
 
-  --primary: oklch(0.62 0.12 264);
-  --primary-foreground: oklch(0.16 0.02 264);
+  --primary: #d4b25f;
+  --primary-foreground: #14213d;
 
-  --secondary: oklch(0.27 0.02 264);
-  --secondary-foreground: oklch(0.96 0.005 250);
+  --secondary: #1e2942;
+  --secondary-foreground: #eef1f6;
 
-  --muted: oklch(0.27 0.02 264);
-  --muted-foreground: oklch(0.72 0.02 255);
+  --muted: #1e2942;
+  --muted-foreground: #a7b0c0;
 
-  --accent: oklch(0.3 0.04 264);
-  --accent-foreground: oklch(0.96 0.005 250);
+  --accent: #233456;
+  --accent-foreground: #eef1f6;
 
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: #d36b6b;
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.62 0.12 264);
+  --success: #3aa183;
+  --success-foreground: #06120e;
 
-  --chart-1: oklch(0.62 0.12 264);
-  --chart-2: oklch(0.55 0.11 255);
-  --chart-3: oklch(0.7 0.09 245);
-  --chart-4: oklch(0.7 0.02 85);
-  --chart-5: oklch(0.8 0.015 85);
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #d4b25f;
 
-  --sidebar: oklch(0.2 0.025 264);
-  --sidebar-foreground: oklch(0.92 0.012 250);
-  --sidebar-primary: oklch(0.62 0.12 264);
-  --sidebar-primary-foreground: oklch(0.985 0.002 247);
-  --sidebar-accent: oklch(0.3 0.04 264);
-  --sidebar-accent-foreground: oklch(0.96 0.005 250);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.62 0.12 264);
+  --chart-1: #d4b25f;
+  --chart-2: #4a6aa5;
+  --chart-3: #6b8bc2;
+  --chart-4: #b3ada1;
+  --chart-5: #8a93a5;
+
+  --sidebar: #0c1320;
+  --sidebar-foreground: #eef1f6;
+  --sidebar-primary: #d4b25f;
+  --sidebar-primary-foreground: #14213d;
+  --sidebar-accent: #1e2942;
+  --sidebar-accent-foreground: #eef1f6;
+  --sidebar-border: rgba(212, 178, 95, 0.24);
+  --sidebar-ring: #d4b25f;
 }
 
 @layer base {
@@ -163,26 +182,29 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "cv11", "ss01";
+    /* Readability: never below 15px for body copy. */
+    font-size: 15px;
+    line-height: 1.55;
   }
   html {
     @apply font-sans;
   }
-  /* Display headings + brand wordmark use the Bodoni serif */
+  /* Page + section titles use Cormorant Garamond in deep navy on light. */
   .font-heading {
     font-family: var(--font-heading);
+    color: var(--cb-heading);
+    letter-spacing: 0.005em;
   }
-  /* Letter-spaced small-caps eyebrow label */
+  /* Small-caps-style eyebrow, but sentence case per brand standard. */
   .eyebrow {
-    @apply text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground;
+    @apply text-xs font-semibold tracking-[0.04em] text-muted-foreground;
   }
 }
 
 @layer components {
-  /* Premium navy hero band used on the home dashboard */
+  /* Flat navy hero band used on the home dashboard (no gradients per brand). */
   .cb-hero {
-    background:
-      radial-gradient(120% 120% at 100% 0%, color-mix(in oklab, var(--cb-blue) 55%, transparent) 0%, transparent 55%),
-      linear-gradient(135deg, var(--cb-navy) 0%, color-mix(in oklab, var(--cb-navy) 80%, black) 100%);
+    background: var(--cb-navy);
   }
   /* Subtle staggered page-load reveal */
   .cb-reveal {

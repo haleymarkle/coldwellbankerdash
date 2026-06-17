@@ -61,16 +61,17 @@ Auth contract (`@/lib/auth`): `requireUser()` (redirects to `/sign-in`), `requir
 
 ## Design system
 
-- **Headings/display + brand wordmark:** Bodoni Moda serif via the `font-heading` utility class. Stat
-  figures look great in `font-heading` too.
-- **Body/UI:** default sans (Hanken Grotesk).
-- **Brand color:** CB Blue navy `#012169` — but **use semantic Tailwind tokens, never hardcode hex**:
+- **Headings/display + brand wordmark:** Cormorant Garamond serif via the `font-heading` utility class
+  (renders in deep navy `#1A2B4A` on light, light on dark). Use for page/section titles only.
+- **Body/UI:** default sans (Inter). Never below 15px for body copy.
+- **Brand color:** CB navy `#14213D` (primary), gold `#C8A24B` (accents/active states only — never body
+  text), cream `#F7F4EC` (app background) — but **use semantic Tailwind tokens, never hardcode hex**:
   `bg-background`, `text-foreground`, `bg-card`, `bg-primary`/`text-primary-foreground` (navy),
   `text-muted-foreground`, `border-border`, `bg-secondary`, `bg-accent`, `bg-muted`, the `sidebar-*`
-  tokens, and brand raw tokens `text-cb-blue` / `bg-cb-navy` / `text-cb-taupe`. **Dark mode is
-  automatic via tokens** — never hardcode light/dark colors.
-- **Helpers (defined in `globals.css`):** `eyebrow` (uppercase small-caps label), `cb-hero` (navy hero
-  gradient band), `cb-reveal` (staggered load reveal — add inline `style={{ animationDelay: '…' }}`).
+  tokens, and brand raw tokens `text-cb-gold` / `bg-cb-navy` / `text-cb-blue` / `text-cb-taupe`. **Dark
+  mode is automatic via tokens** — never hardcode light/dark colors.
+- **Helpers (defined in `globals.css`):** `eyebrow` (sentence-case label), `cb-hero` (flat navy hero
+  band), `cb-reveal` (staggered load reveal — add inline `style={{ animationDelay: '…' }}`).
 - **Cards:** `rounded-lg border bg-card shadow-sm` with subtle `hover:shadow-md transition`. Generous
   spacing (`p-4 md:p-6`, `gap-4/gap-6`). Refined editorial / luxury feel, not flashy.
 - **Accessibility:** semantic landmarks, labeled controls, keyboard-friendly, visible focus rings.

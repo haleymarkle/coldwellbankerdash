@@ -23,9 +23,9 @@ export const SEED_TOOLS: Tool[] = [
   {
     id: "tool-commission-calculator",
     slug: "commission-calculator",
-    name: "Commission Calculator",
+    name: "Commission Ledger",
     description:
-      "Estimate gross commission, splits, and agent net for a sale price and rate.",
+      "Log deals and track year-to-date payouts with referral, corporate, and progressive tiered agent splits.",
     icon: "Calculator",
     type: "internal_route",
     url: "/tools/commission-calculator",
@@ -54,8 +54,8 @@ export const SEED_TOOLS: Tool[] = [
     name: "Company CRM",
     description: "Manage leads, contacts, and your pipeline in the brokerage CRM.",
     icon: "Users",
-    type: "external_link",
-    url: "https://www.coldwellbanker.com",
+    type: "internal_route",
+    url: "/tools/crm",
     category: "Sales",
     roles: ROLES,
     sortOrder: 30,
@@ -142,7 +142,7 @@ export const SEED_TOOLS: Tool[] = [
 ];
 
 /** Slugs that are hosted internally and have a real renderer in v1. */
-export const BUILT_INTERNAL_TOOL_SLUGS = ["commission-calculator"] as const;
+export const BUILT_INTERNAL_TOOL_SLUGS = ["commission-calculator", "crm"] as const;
 
 export function isBuiltInternalTool(slug: string): boolean {
   return (BUILT_INTERNAL_TOOL_SLUGS as readonly string[]).includes(slug);
