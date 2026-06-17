@@ -9,6 +9,15 @@ import { NextResponse, type NextRequest } from "next/server";
 import { DEV_SESSION_COOKIE } from "@/lib/auth/dev-stub";
 
 export default async function proxy(request: NextRequest) {
+  // DEV bypass: outside production we auto-sign-in as master admin, so let
+  // every request through. Deployments run NODE_ENV=production and skip this.
+  if (
+    process.env.NODE_ENV !== "production" &&
+    process.env.DEV_AUTH_BYPASS !== "false"
+  ) {
+    return NextResponse.next();
+  }
+
   if (process.env.NEON_AUTH_BASE_URL && process.env.NEON_AUTH_COOKIE_SECRET) {
     const { getAuth } = await import("@/lib/auth/neon");
     return getAuth().middleware({ loginUrl: "/sign-in" })(request);

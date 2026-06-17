@@ -8,9 +8,25 @@ import { hasAtLeast } from "@/lib/rbac";
 import { getData } from "@/lib/data";
 import { getDevSession } from "./dev-stub";
 
+/** The bootstrap master-admin email, auto-signed-in during local dev. */
+export const MASTER_ADMIN_EMAIL = "haleymarkle@gmail.com";
+
 /** True when Neon Auth (Better Auth) is fully configured (production path). */
 export function isAuthConfigured(): boolean {
   return Boolean(process.env.NEON_AUTH_BASE_URL && process.env.NEON_AUTH_COOKIE_SECRET);
+}
+
+/**
+ * True when we should skip login entirely and auto-sign-in as the master admin.
+ * Active only outside production (i.e. `npm run dev` here / locally), so the
+ * dashboard is editable without auth. Every deployment runs NODE_ENV=production
+ * and is therefore fully gated. Set DEV_AUTH_BYPASS=false to test real auth in dev.
+ */
+export function isDevAuthBypass(): boolean {
+  return (
+    process.env.NODE_ENV !== "production" &&
+    process.env.DEV_AUTH_BYPASS !== "false"
+  );
 }
 
 interface AuthSession {
@@ -19,6 +35,12 @@ interface AuthSession {
 
 /** The raw authenticated session (or null). */
 export async function getSession(): Promise<AuthSession | null> {
+  if (isDevAuthBypass()) {
+    // Dev: resolve the master-admin profile straight from the DB, no login.
+    const data = await getData();
+    const profile = await data.getProfileByEmail(MASTER_ADMIN_EMAIL);
+    return profile ? { userId: profile.userId } : null;
+  }
   if (!isAuthConfigured()) return getDevSession();
   const { getNeonSession } = await import("./neon");
   return getNeonSession();
