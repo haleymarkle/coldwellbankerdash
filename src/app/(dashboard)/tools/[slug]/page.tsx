@@ -5,7 +5,7 @@ import { ArrowLeft, ExternalLink, Lock } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { getData } from "@/lib/data";
 import { isBuiltInternalTool } from "@/lib/tools-registry";
-import { canAccessTool } from "@/lib/rbac";
+import { canAccessTool, canManageOffice } from "@/lib/rbac";
 
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
@@ -23,6 +23,8 @@ import {
 
 import { CommissionLedger } from "./_tools/commission-ledger";
 import { getCommissionData } from "@/lib/commission/data";
+import { CompanyCrm } from "./_tools/company-crm";
+import { getCrmData } from "@/lib/crm/data";
 
 interface ToolPageProps {
   params: Promise<{ slug: string }>;
@@ -98,6 +100,36 @@ export default async function ToolPage({ params }: ToolPageProps) {
           initialSettings={initialSettings}
           initialAgents={initialAgents}
           initialEntries={initialEntries}
+        />
+      </div>
+    );
+  }
+
+  if (isBuiltInternalTool(tool.slug) && tool.slug === "crm") {
+    const canSeeAll = canManageOffice(user.role);
+    const crm = await getCrmData();
+    const contacts = await crm.listContacts(canSeeAll ? null : user.id);
+    const agents = canSeeAll
+      ? (await data.listProfiles()).map((p) => ({
+          id: p.id,
+          name: p.displayName,
+        }))
+      : [{ id: user.id, name: user.name }];
+    return (
+      <div className="space-y-8">
+        {backLink}
+        <PageHeader
+          eyebrow="Resources"
+          title={tool.name}
+          description={tool.description}
+        >
+          <Badge variant="secondary">{tool.category}</Badge>
+        </PageHeader>
+        <CompanyCrm
+          initialContacts={contacts}
+          agents={agents}
+          currentUserId={user.id}
+          canSeeAll={canSeeAll}
         />
       </div>
     );

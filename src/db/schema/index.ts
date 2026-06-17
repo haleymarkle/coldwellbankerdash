@@ -15,6 +15,7 @@ export * from "./profiles";
 export * from "./tools";
 export * from "./trainings";
 export * from "./commission";
+export * from "./crm";
 export * from "./audit";
 
 export const officesRelations = relations(offices, ({ many }) => ({
