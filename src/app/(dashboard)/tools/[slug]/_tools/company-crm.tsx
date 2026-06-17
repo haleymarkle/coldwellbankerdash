@@ -200,6 +200,7 @@ export function CompanyCrm({
   }
 
   function handleSave(values: ContactFormValues) {
+    console.log("[v0] handleSave called, editing=", editing?.id ?? null, "values=", values);
     const payload = {
       name: values.name.trim(),
       email: values.email.trim() || null,

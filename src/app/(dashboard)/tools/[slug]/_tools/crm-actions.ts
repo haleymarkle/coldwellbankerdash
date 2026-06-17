@@ -84,9 +84,11 @@ async function authorizeContact(
 export async function createContactAction(
   input: ContactInput
 ): Promise<MutationResult<Contact>> {
+  console.log("[v0] createContactAction invoked with:", JSON.stringify(input));
   const user = await requireUser();
   const parsed = contactSchema.safeParse(input);
   if (!parsed.success) {
+    console.log("[v0] createContactAction validation failed:", parsed.error.issues);
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Invalid contact." };
   }
   const crm = await getCrmData();
