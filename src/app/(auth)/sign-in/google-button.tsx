@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { signInWithGoogle } from "./actions";
+import { authClient } from "@/lib/auth/client";
 
 /** Google "G" logo SVG (official brand colors). */
 function GoogleLogo() {
@@ -41,13 +41,17 @@ export function GoogleSignInButton() {
   async function handleClick() {
     setPending(true);
     setError(null);
-    const result = await signInWithGoogle();
-    if ("error" in result) {
-      setError(result.error);
+    // Initiate Google OAuth from the BROWSER so Better Auth can set the PKCE/
+    // state cookies on the client. The client handles the redirect to Google
+    // automatically; on success the user returns to `callbackURL`.
+    const { error: socialError } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+      errorCallbackURL: "/sign-in?error=oauth",
+    });
+    if (socialError) {
+      setError(socialError.message ?? "Could not start Google sign-in.");
       setPending(false);
-    } else {
-      // Hand off to Neon Auth's Google OAuth (shared credentials).
-      window.location.href = result.url;
     }
   }
 
