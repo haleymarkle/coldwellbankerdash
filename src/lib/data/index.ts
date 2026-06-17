@@ -188,7 +188,10 @@ function withOffice(p: Profile): ProfileWithOffice {
 
 const devApi: DataApi = {
   async listOffices() {
-    return store.offices.map((o) => ({ ...o }));
+    // Match prod (queries-db: orderBy asc(offices.name)) so dev/prod row order agrees.
+    return store.offices
+      .map((o) => ({ ...o }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   },
   async getOffice(id) {
     return store.offices.find((o) => o.id === id) ?? null;
@@ -219,10 +222,16 @@ const devApi: DataApi = {
   },
 
   async listProfiles() {
-    return store.profiles.map(withOffice);
+    // Match prod (orderBy asc(profiles.displayName)).
+    return store.profiles
+      .map(withOffice)
+      .sort((a, b) => a.displayName.localeCompare(b.displayName));
   },
   async listProfilesByOffice(officeId) {
-    return store.profiles.filter((p) => p.officeId === officeId).map(withOffice);
+    return store.profiles
+      .filter((p) => p.officeId === officeId)
+      .map(withOffice)
+      .sort((a, b) => a.displayName.localeCompare(b.displayName));
   },
   async getProfileByUserId(userId) {
     return store.profiles.find((p) => p.userId === userId) ?? null;
@@ -237,7 +246,9 @@ const devApi: DataApi = {
     const profile: Profile = {
       id: newId("profile"),
       userId: input.userId ?? newId("user"),
-      email: input.email,
+      // Normalize email on write so getProfileByEmail (prod does eq(email, lower(input)))
+      // matches regardless of input casing — keeps dev/prod lookups in lockstep.
+      email: input.email.toLowerCase(),
       displayName: input.displayName,
       role: input.role,
       status: input.status ?? "invited",
@@ -254,6 +265,7 @@ const devApi: DataApi = {
     const profile = store.profiles.find((p) => p.id === id);
     if (!profile) return null;
     Object.assign(profile, input);
+    if (input.email !== undefined) profile.email = input.email.toLowerCase();
     return { ...profile };
   },
   async deleteProfile(id) {
@@ -262,14 +274,21 @@ const devApi: DataApi = {
   },
 
   async listTools() {
-    return store.tools.map((t) => ({ ...t, roles: [...t.roles] }));
+    // Match prod (orderBy asc(tools.sortOrder)).
+    return store.tools
+      .map((t) => ({ ...t, roles: [...t.roles] }))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
   },
   async getToolBySlug(slug) {
     const tool = store.tools.find((t) => t.slug === slug);
     return tool ? { ...tool, roles: [...tool.roles] } : null;
   },
   async getToolsForUser(user) {
+    // Prod pre-filters inactive tools in SQL (where isActive = true); canAccessTool
+    // short-circuits for master_admin BEFORE its isActive check, so dev must filter
+    // inactive tools explicitly to avoid showing them to admins (lockstep with prod).
     return store.tools
+      .filter((t) => t.isActive)
       .filter((t) => canAccessTool(user, t))
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((t) => ({ ...t, roles: [...t.roles] }));
@@ -303,10 +322,13 @@ const devApi: DataApi = {
   },
 
   async listTrainings() {
-    return store.trainings.map((t) => ({
-      ...t,
-      requiredForRoles: [...t.requiredForRoles],
-    }));
+    // Match prod (orderBy asc(trainings.title)).
+    return store.trainings
+      .map((t) => ({
+        ...t,
+        requiredForRoles: [...t.requiredForRoles],
+      }))
+      .sort((a, b) => a.title.localeCompare(b.title));
   },
   async getTrainingById(id) {
     const t = store.trainings.find((x) => x.id === id);
@@ -351,7 +373,11 @@ const devApi: DataApi = {
         assignment: { ...a },
       });
     }
-    return result;
+    // Match prod (orderBy asc(trainingAssignments.assignedAt)). Entries here always
+    // carry an assignment; the ?? guards only satisfy the nullable type.
+    return result.sort((a, b) =>
+      (a.assignment?.assignedAt ?? "").localeCompare(b.assignment?.assignedAt ?? "")
+    );
   },
   async assignTraining(profileId, trainingId) {
     const existing = store.assignments.find(
@@ -402,6 +428,7 @@ const devApi: DataApi = {
   async getOfficeProgress(officeId) {
     return store.profiles
       .filter((p) => p.officeId === officeId)
+      .sort((a, b) => a.displayName.localeCompare(b.displayName))
       .map((p) => {
         const items = store.assignments.filter((a) => a.profileId === p.id);
         const stats = computeStats(items);

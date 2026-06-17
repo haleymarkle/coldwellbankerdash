@@ -25,7 +25,16 @@ export function getAuth() {
     // layer — no GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET needed in the app.
     _auth = createNeonAuth({
       baseUrl,
-      cookies: { secret },
+      cookies: {
+        secret,
+        // OAuth returns from Google → Neon's hosted auth → back to this app as a
+        // cross-site, top-level navigation. The lib's default SameSite=Strict drops
+        // the OAuth `session_challange` cookie on that return, so the verifier
+        // exchange never runs and sign-in bounces back to /sign-in. `lax` is sent on
+        // top-level cross-site GETs — exactly the OAuth return — and was the lib's
+        // previous hard-coded default. Required for Google sign-in to work.
+        sameSite: "lax",
+      },
     });
   }
   return _auth;

@@ -44,13 +44,22 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     if (neonUser?.email) {
       const isMasterAdmin =
         neonUser.email.toLowerCase() === "haleymarkle@gmail.com";
-      profile = await data.createProfile({
-        userId: session.userId,
-        email: neonUser.email,
-        displayName: neonUser.name ?? neonUser.email,
-        role: isMasterAdmin ? "master_admin" : "agent",
-        status: isMasterAdmin ? "active" : "invited",
-      });
+      try {
+        profile = await data.createProfile({
+          userId: session.userId,
+          email: neonUser.email,
+          displayName: neonUser.name ?? neonUser.email,
+          role: isMasterAdmin ? "master_admin" : "agent",
+          status: isMasterAdmin ? "active" : "invited",
+        });
+      } catch (err) {
+        // On first sign-in the dashboard layout + RSC segments call this
+        // concurrently; each sees "no profile" and races to INSERT. The unique
+        // user_id constraint rejects all but the winner — re-fetch the row the
+        // winner created instead of crashing. Re-throw if it was a real failure.
+        profile = await data.getProfileByUserId(session.userId);
+        if (!profile) throw err;
+      }
     }
   }
 

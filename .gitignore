@@ -35,6 +35,12 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but the template (no secrets) is committed for onboarding
+!.env.example
+
+# other package managers — this project standardizes on npm (package-lock.json)
+pnpm-lock.yaml
+pnpm-workspace.yaml
 
 # vercel
 .vercel

@@ -306,7 +306,8 @@ export const dbApi: DataApi = {
       .values({
         // Generate an auth user id when the profile is invited ahead of sign-in.
         userId: input.userId ?? crypto.randomUUID(),
-        email: input.email,
+        // Normalize on write so getProfileByEmail's lower()-on-input lookup matches.
+        email: input.email.toLowerCase(),
         displayName: input.displayName,
         role: input.role,
         status: input.status ?? "invited",
@@ -321,7 +322,7 @@ export const dbApi: DataApi = {
   async updateProfile(id, input: Partial<ProfileInput>) {
     const patch: Partial<typeof profiles.$inferInsert> = { updatedAt: new Date() };
     if (input.userId !== undefined) patch.userId = input.userId;
-    if (input.email !== undefined) patch.email = input.email;
+    if (input.email !== undefined) patch.email = input.email.toLowerCase();
     if (input.displayName !== undefined) patch.displayName = input.displayName;
     if (input.role !== undefined) patch.role = input.role;
     if (input.status !== undefined) patch.status = input.status;
