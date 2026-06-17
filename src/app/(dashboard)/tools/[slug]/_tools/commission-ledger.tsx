@@ -173,7 +173,7 @@ export function CommissionLedger({
   return (
     <div className="text-foreground">
       {error && (
-        <div className="mb-4 flex items-center gap-2 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+        <div className="mb-4 flex items-center gap-2 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
           <AlertCircle size={15} /> {error}
         </div>
       )}
@@ -195,7 +195,7 @@ export function CommissionLedger({
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="rounded-md border border-input px-3 py-2 text-sm font-mono bg-white"
+            className="rounded-md border border-input px-3 py-2 text-sm font-mono bg-card"
             aria-label="Filter by year"
           >
             {years.map((y) => (
@@ -207,7 +207,7 @@ export function CommissionLedger({
           <button
             onClick={() => exportCSV(results, settings, agents)}
             disabled={!results.length}
-            className="flex items-center gap-1.5 rounded-md border border-input bg-white px-3 py-2 text-sm font-medium hover:bg-slate-100 disabled:opacity-40"
+            className="flex items-center gap-1.5 rounded-md border border-input bg-card px-3 py-2 text-sm font-medium hover:bg-muted disabled:opacity-40"
           >
             <Download size={15} /> CSV
           </button>
@@ -271,7 +271,7 @@ export function CommissionLedger({
         <SettingsPanel settings={settings} onChange={saveSettings} />
       )}
 
-      <footer className="mt-10 pt-4 border-t border-slate-200 text-[11px] text-muted-foreground/70 leading-relaxed">
+      <footer className="mt-10 pt-4 border-t border-border text-[11px] text-muted-foreground/70 leading-relaxed">
         Calculation order per deal: referral off the top → {settings.corporatePct}% corporate on the
         remainder → tiered agent/company split. Figures are estimates for internal tracking; referral
         fees and split arrangements must comply with your state license law and RESPA. Data is saved to
@@ -338,7 +338,7 @@ function Waterfall({ r }: { r: ComputedEntry }) {
         style={{ width: `${(amt / gci) * 100}%`, background: color }}
         title={`${label}: ${usd(amt)}`}
       >
-        <span className="text-[10px] font-semibold text-white px-1 truncate">{label}</span>
+          <span className="text-[10px] font-semibold text-primary-foreground px-1 truncate">{label}</span>
       </div>
     ) : null;
   return (
@@ -356,7 +356,7 @@ function Waterfall({ r }: { r: ComputedEntry }) {
         <Bd c={C.company} k="Company" v={r.companyAmt} />
       </div>
       {r.crossed && (
-        <div className="text-xs bg-amber-50 border border-amber-200 rounded-md p-2 text-amber-800">
+        <div className="text-xs bg-cb-gold/10 border border-cb-gold/30 rounded-md p-2 text-foreground/80">
           This deal crossed a split threshold. Split applied in segments:{" "}
           {r.segments.map((s, i) => (
             <span key={i} className="font-mono">
@@ -409,7 +409,7 @@ function Dashboard({
 
   return (
     <div className="bg-card border border-border rounded-lg overflow-hidden">
-      <div className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-slate-50 border-b border-border text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
+      <div className="grid grid-cols-12 gap-2 px-4 py-2.5 bg-muted border-b border-border text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">
         <div className="col-span-3">Date / Agent</div>
         <div className="col-span-3">Property</div>
         <div className="col-span-2 text-right">GCI</div>
@@ -422,7 +422,7 @@ function Dashboard({
           <div key={r.id} className="border-b border-border/60 last:border-0">
             <button
               onClick={() => setOpen(isOpen ? null : r.id)}
-              className="w-full grid grid-cols-12 gap-2 px-4 py-3 text-sm hover:bg-slate-50 text-left items-center"
+              className="w-full grid grid-cols-12 gap-2 px-4 py-3 text-sm hover:bg-muted/60 text-left items-center"
             >
               <div className="col-span-3 min-w-0">
                 <div className="flex items-center gap-1 font-medium" style={{ color: INK }}>
@@ -441,7 +441,7 @@ function Dashboard({
               </div>
             </button>
             {isOpen && (
-              <div className="px-4 pb-4 pt-1 bg-slate-50/60">
+              <div className="px-4 pb-4 pt-1 bg-muted/40">
                 <Waterfall r={r} />
                 <div className="flex items-center justify-between mt-3 text-xs text-muted-foreground">
                   <span>
@@ -451,7 +451,7 @@ function Dashboard({
                   </span>
                   <button
                     onClick={() => onDelete(r.id)}
-                    className="flex items-center gap-1 text-rose-600 hover:text-rose-700 font-medium"
+                    className="flex items-center gap-1 text-destructive hover:text-destructive/80 font-medium"
                   >
                     <Trash2 size={13} /> Delete
                   </button>
@@ -576,7 +576,7 @@ function NewCommission({
       </div>
 
       {!String(form.date).startsWith(String(year)) && form.date && (
-        <p className="text-xs text-amber-600 mt-3 flex items-center gap-1">
+        <p className="text-xs text-cb-gold mt-3 flex items-center gap-1">
           <AlertCircle size={13} /> This date is outside {year}; it will appear when you select its
           year.
         </p>
@@ -714,13 +714,13 @@ function AgentsPanel({
               <div className="flex items-center gap-3">
                 <span
                   className="text-xs px-2 py-1 rounded-full font-medium"
-                  style={{ background: "#ecfeff", color: C.agent }}
+                  style={{ background: "color-mix(in srgb, var(--cb-blue) 12%, transparent)", color: C.agent }}
                 >
                   Tier {tierIdx + 1}: {tier.agentPct}/{tier.companyPct}
                 </span>
                 <button
                   onClick={() => onRemove(a.id)}
-                  className="text-slate-300 hover:text-rose-600"
+                  className="text-muted-foreground/50 hover:text-destructive"
                   aria-label="Remove agent"
                 >
                   <Trash2 size={15} />
@@ -756,7 +756,7 @@ function AgentsPanel({
                   {nextThresh != null ? ` / ${usd(nextThresh)}` : ""}
                 </span>
               </div>
-              <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
                 <div className="h-full rounded-full" style={{ width: `${pct}%`, background: C.company }} />
               </div>
             </div>
@@ -824,7 +824,7 @@ function SettingsPanel({
           </h3>
           <button
             onClick={addTier}
-            className="flex items-center gap-1 text-sm text-teal-600 font-medium hover:text-teal-700"
+            className="flex items-center gap-1 text-sm text-primary font-medium hover:text-primary/80"
           >
             <Plus size={14} /> Add tier
           </button>
@@ -839,12 +839,12 @@ function SettingsPanel({
             return (
               <div
                 key={i}
-                className="flex flex-wrap items-end gap-3 p-3 bg-slate-50 rounded-md border border-slate-100"
+                className="flex flex-wrap items-end gap-3 p-3 bg-muted/50 rounded-md border border-border"
               >
                 <div className="text-xs text-muted-foreground font-mono pt-2">{usd(prev || 0)} –</div>
                 <Field label="Up to (company $)">
                   {t.threshold == null ? (
-                    <div className={inputCls + " w-32 bg-slate-100 text-muted-foreground/70 italic"}>
+                    <div className={inputCls + " w-32 bg-muted text-muted-foreground/70 italic"}>
                       and above
                     </div>
                   ) : (
@@ -871,7 +871,7 @@ function SettingsPanel({
                 {settings.tiers.length > 1 && (
                   <button
                     onClick={() => removeTier(i)}
-                    className="text-slate-300 hover:text-rose-600 pb-2 ml-auto"
+                    className="text-muted-foreground/50 hover:text-destructive pb-2 ml-auto"
                     aria-label="Remove tier"
                   >
                     <Trash2 size={15} />
@@ -943,13 +943,13 @@ function Toggle({
       <button
         onClick={() => onChange(!on)}
         className={`relative w-11 h-6 rounded-full transition-colors flex-shrink-0 ${
-          on ? "bg-teal-600" : "bg-slate-300"
+          on ? "bg-primary" : "bg-muted-foreground/30"
         }`}
         aria-pressed={on}
         aria-label={label}
       >
         <span
-          className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${
+          className={`absolute top-0.5 left-0.5 w-5 h-5 bg-card rounded-full transition-transform ${
             on ? "translate-x-5" : ""
           }`}
         />
@@ -973,7 +973,7 @@ function Radio({
 }) {
   return (
     <label className="flex items-start gap-2 cursor-pointer">
-      <input type="radio" name={name} checked={checked} onChange={onChange} className="mt-1 accent-teal-600" />
+      <input type="radio" name={name} checked={checked} onChange={onChange} className="mt-1 accent-primary" />
       <span>
         <span className="text-sm font-medium" style={{ color: INK }}>
           {label}
@@ -998,7 +998,7 @@ function Empty({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white border border-dashed border-slate-300 rounded-lg p-10 text-center">
+    <div className="bg-card border border-dashed border-input rounded-lg p-10 text-center">
       <h3 className="font-semibold text-foreground">{title}</h3>
       <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">{body}</p>
       {action && <div className="mt-4">{action}</div>}
